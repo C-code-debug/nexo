@@ -6,7 +6,7 @@
 const initSqlJs = require('sql.js');
 const fs = require('fs');
 const path = require('path');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const DB_PATH = path.join(__dirname, 'nexo.db');
 
