@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexo - Game Development</title>
+    <title>NEXO - Game Development</title>
     <style>
         * {
             margin: 0;
@@ -14,144 +14,352 @@
         }
 
         :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-card: #ffffff;
-            --text-primary: #1a1a1a;
-            --text-secondary: #6c757d;
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --border: #e5e7eb;
-            --shadow: rgba(0, 0, 0, 0.1);
+            --bg-primary: #0a0e27;
+            --bg-secondary: #141b3a;
+            --bg-card: rgba(20, 27, 58, 0.6);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent: #00f0ff;
+            --accent-2: #ff00ff;
+            --accent-glow: rgba(0, 240, 255, 0.3);
+            --border: rgba(0, 240, 255, 0.2);
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        [data-theme="dark"] {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #1e293b;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --accent: #818cf8;
-            --accent-hover: #6366f1;
-            --border: #334155;
-            --shadow: rgba(0, 0, 0, 0.3);
+        [data-theme="light"] {
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #e1e8ed;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --accent: #0080ff;
+            --accent-2: #e100ff;
+            --accent-glow: rgba(0, 128, 255, 0.2);
+            --border: rgba(0, 128, 255, 0.3);
+            --glass: rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--accent-glow), 0 0 10px var(--accent-glow); }
+            50% { box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow); }
+        }
+
+        @keyframes geometric {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Rajdhani', 'Orbitron', 'Segoe UI', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: all 0.2s ease;
             line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background geométrico */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Formas geométricas flutuantes */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 10%;
+            right: 10%;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            opacity: 0.1;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation: float 6s ease-in-out infinite, geometric 20s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .geometric-shape {
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border: 2px solid var(--border);
+            opacity: 0.2;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .geometric-shape.shape-1 {
+            top: 20%;
+            left: 5%;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .geometric-shape.shape-2 {
+            bottom: 15%;
+            right: 15%;
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        .geometric-shape.shape-3 {
+            top: 50%;
+            left: 80%;
+            width: 150px;
+            height: 150px;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: pulse 4s ease-in-out infinite;
         }
 
         header {
             background: var(--bg-card);
-            border-bottom: 2px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 6px var(--shadow);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            animation: slideInUp 0.3s ease;
+        }
+
+        header:hover {
+            box-shadow: 0 8px 32px var(--accent-glow);
         }
 
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 1.5rem 2rem;
+            padding: 1.2rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
         .logo {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--accent), #ec4899);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: 2px;
-            animation: fadeInDown 0.6s ease;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            animation: slideInRight 0.4s ease;
+            position: relative;
+            text-shadow: 0 0 30px var(--accent-glow);
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+        }
+
+        .logo::before {
+            content: '◢';
+            position: absolute;
+            left: -30px;
+            color: var(--accent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .logo::after {
+            content: '◣';
+            position: absolute;
+            right: -30px;
+            color: var(--accent-2);
+            animation: pulse 2s ease-in-out infinite reverse;
         }
 
         nav {
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
             align-items: center;
         }
 
         .nav-link {
             color: var(--text-secondary);
             text-decoration: none;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            font-weight: 700;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            transition: all 0.15s ease;
             cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid transparent;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width 0.2s ease;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 100%;
         }
 
         .nav-link:hover,
         .nav-link.active {
             color: var(--accent);
             background: var(--bg-secondary);
-        }
-
-        .theme-toggle {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: rotate(180deg);
-            background: var(--accent);
-            color: white;
-        }
-
-        .admin-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .admin-btn:hover {
-            background: var(--accent-hover);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
             transform: translateY(-2px);
         }
 
+        .theme-toggle {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.15s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 30px var(--accent-glow), 0 0 15px var(--accent);
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 40px var(--accent-glow), 0 0 20px var(--accent), inset 0 0 10px var(--accent-glow);
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #000;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .admin-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 40px var(--accent-glow);
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 3rem 2rem;
-            animation: fadeIn 0.6s ease;
+            position: relative;
+            z-index: 1;
         }
 
         .section {
             display: none;
-            animation: slideIn 0.4s ease;
         }
 
         .section.active {
             display: block;
+            animation: slideInUp 0.3s ease;
         }
 
         .section-title {
-            font-size: 2.5rem;
+            font-size: 3rem;
             margin-bottom: 2rem;
             color: var(--text-primary);
             position: relative;
             padding-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 900;
+        }
+
+        .section-title::before {
+            content: '▶';
+            color: var(--accent);
+            margin-right: 1rem;
+            animation: pulse 2s ease-in-out infinite;
         }
 
         .section-title::after {
@@ -159,91 +367,175 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 80px;
+            width: 120px;
             height: 4px;
-            background: linear-gradient(135deg, var(--accent), #ec4899);
+            background: linear-gradient(90deg, var(--accent), var(--accent-2), transparent);
             border-radius: 2px;
         }
 
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 2rem;
             margin-top: 2rem;
         }
 
         .card {
             background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 2rem;
-            box-shadow: 0 4px 6px var(--shadow);
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.5s ease;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.4s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-glow), transparent);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            opacity: 1;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px var(--shadow);
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 40px var(--accent-glow),
+                inset 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent), var(--accent-2));
+            border-radius: 8px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.2s ease;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .card:hover::after {
+            opacity: 0.3;
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             margin-bottom: 1rem;
-            color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .card-date {
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .card-content {
             color: var(--text-primary);
             margin-bottom: 1rem;
             white-space: pre-wrap;
+            line-height: 1.7;
         }
 
         .card-btn {
-            background: var(--accent);
-            color: white;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #000;
             border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-weight: 700;
+            transition: all 0.15s ease;
             width: 100%;
             margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .card-btn:hover::before {
+            width: 400px;
+            height: 400px;
         }
 
         .card-btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px var(--accent-glow);
         }
 
         .delete-btn {
-            background: #ef4444;
+            background: linear-gradient(135deg, #ff0055, #ff4400);
             margin-top: 0.5rem;
         }
 
         .delete-btn:hover {
-            background: #dc2626;
+            box-shadow: 0 10px 30px rgba(255, 0, 85, 0.4);
         }
 
         .admin-form {
             background: var(--bg-card);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 2rem;
             margin-bottom: 2rem;
             display: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .admin-form.active {
             display: block;
-            animation: slideIn 0.4s ease;
+            animation: slideInUp 0.3s ease;
+        }
+
+        .admin-form h3 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .form-group {
@@ -254,19 +546,23 @@
             display: block;
             margin-bottom: 0.5rem;
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 0.8rem;
-            border: 2px solid var(--border);
-            border-radius: 8px;
+            padding: 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
             background: var(--bg-secondary);
+            backdrop-filter: blur(10px);
             color: var(--text-primary);
             font-size: 1rem;
-            transition: all 0.3s ease;
+            transition: all 0.15s ease;
             font-family: inherit;
         }
 
@@ -274,6 +570,8 @@
         .form-group textarea:focus {
             outline: none;
             border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-2px);
         }
 
         .form-group textarea {
@@ -288,102 +586,85 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
             z-index: 2000;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.3s ease;
         }
 
         .modal.active {
             display: flex;
+            animation: slideInUp 0.2s ease;
         }
 
         .modal-content {
             background: var(--bg-card);
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 400px;
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 8px;
+            max-width: 450px;
             width: 90%;
-            animation: scaleIn 0.3s ease;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--accent-glow);
+            animation: slideInUp 0.3s ease;
         }
 
         .modal-title {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 1.5rem;
-            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 900;
         }
 
         .empty-message {
             text-align: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .loading {
+            text-align: center;
             padding: 3rem;
             color: var(--text-secondary);
-            font-size: 1.2rem;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes scaleIn {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
         }
 
         .mobile-menu-btn {
             display: none;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border);
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
             color: var(--text-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 1.5rem;
+            transition: all 0.15s ease;
         }
 
+        .mobile-menu-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* Responsividade */
         @media (max-width: 768px) {
             .logo {
                 font-size: 2rem;
+                letter-spacing: 4px;
+            }
+
+            .logo::before,
+            .logo::after {
+                display: none;
             }
 
             nav {
@@ -393,10 +674,11 @@
                 left: 0;
                 right: 0;
                 background: var(--bg-card);
+                backdrop-filter: blur(20px);
                 flex-direction: column;
                 padding: 1rem;
-                border-bottom: 2px solid var(--border);
-                gap: 0;
+                border-bottom: 1px solid var(--border);
+                gap: 0.5rem;
             }
 
             nav.active {
@@ -428,10 +710,19 @@
             .container {
                 padding: 2rem 1rem;
             }
+
+            .geometric-shape {
+                opacity: 0.1;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Formas geométricas de fundo -->
+    <div class="geometric-shape shape-1"></div>
+    <div class="geometric-shape shape-2"></div>
+    <div class="geometric-shape shape-3"></div>
+
     <header>
         <div class="header-content">
             <div class="logo">NEXO</div>
@@ -443,7 +734,7 @@
                 <a class="nav-link" onclick="showSection('posts')">Posts</a>
                 <a class="nav-link" onclick="showSection('contato')">Contato</a>
                 <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
-                <button class="admin-btn" onclick="showAdminModal()">Admin</button>
+                <button class="admin-btn" id="adminBtn" onclick="showAdminModal()">Admin</button>
             </nav>
         </div>
     </header>
@@ -476,7 +767,9 @@
                 </form>
             </div>
 
-            <div id="atualizacoesGrid" class="cards-grid"></div>
+            <div id="atualizacoesGrid" class="cards-grid">
+                <div class="loading">Carregando atualizações...</div>
+            </div>
         </section>
 
         <section id="downloads" class="section">
@@ -505,7 +798,9 @@
                 </form>
             </div>
 
-            <div id="downloadsGrid" class="cards-grid"></div>
+            <div id="downloadsGrid" class="cards-grid">
+                <div class="loading">Carregando downloads...</div>
+            </div>
         </section>
 
         <section id="posts" class="section">
@@ -526,17 +821,18 @@
                 </form>
             </div>
 
-            <div id="postsGrid" class="cards-grid"></div>
+            <div id="postsGrid" class="cards-grid">
+                <div class="loading">Carregando posts...</div>
+            </div>
         </section>
 
         <section id="contato" class="section">
             <h1 class="section-title">Contato</h1>
             <div class="card">
                 <h2 class="card-title">Entre em Contato</h2>
-                <p class="card-content">Quer falar com a gente? Envie uma mensagem ou siga nossas redes sociais!</p>
-                <p class="card-content">📧 Email: nexogamessuporte@gmail.com
-🎮 Discord: discord.gg/nexo
-📱 Twitter: @nexogames</p>
+                <p class="card-content">Quer falar com a gente? Envie uma mensagem ou entre no nosso servidor!</p>
+                <p class="card-content">📧 Email: <a href="mailto:nexogamessuporte@gmail.com" target="_blank">nexogamessuporte@gmail.com</a>
+🎮 Discord: <a href="https://discord.gg/aqZNgdgY" target="_blank">Nexo</a></p>
             </div>
         </section>
     </div>
@@ -550,27 +846,31 @@
                     <input type="password" id="adminPassword" placeholder="Digite a senha" required>
                 </div>
                 <button type="submit" class="card-btn">Entrar</button>
-                <button type="button" class="card-btn" style="background: #6c757d; margin-top: 0.5rem;" onclick="closeAdminModal()">Cancelar</button>
+                <button type="button" class="card-btn" style="background: linear-gradient(135deg, #6c757d, #495057); margin-top: 0.5rem;" onclick="closeAdminModal()">Cancelar</button>
             </form>
         </div>
     </div>
 
-    <script>
-        const ADMIN_PASSWORD = 'NexADM404';
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // ===============================================
+        // CONFIGURAÇÃO DA API
+        // ===============================================
+        const API_URL = window.location.origin;
+        let authToken = localStorage.getItem('authToken');
         let isAdmin = false;
 
         function detectSystemTheme() {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme) {
                 document.documentElement.setAttribute('data-theme', savedTheme);
-            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.setAttribute('data-theme', 'dark');
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.documentElement.setAttribute('data-theme', 'light');
             }
         }
 
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         }
@@ -589,6 +889,35 @@
             document.getElementById('mainNav').classList.remove('active');
         }
 
+        // ===============================================
+        // AUTENTICAÇÃO
+        // ===============================================
+
+        async function verifyToken() {
+            if (!authToken) return false;
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/verify`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    isAdmin = true;
+                    updateAdminUI();
+                    return true;
+                } else {
+                    localStorage.removeItem('authToken');
+                    authToken = null;
+                    return false;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar token:', error);
+                return false;
+            }
+        }
+
         function showAdminModal() {
             if (isAdmin) {
                 logout();
@@ -602,21 +931,42 @@
             document.getElementById('adminPassword').value = '';
         }
 
-        function loginAdmin(event) {
+        async function loginAdmin(event) {
             event.preventDefault();
-            const password = document.getElementById('adminPassword').value;
             
-            if (password === ADMIN_PASSWORD) {
-                isAdmin = true;
-                closeAdminModal();
-                updateAdminUI();
-                alert('✅ Login realizado com sucesso!');
-            } else {
-                alert('❌ Senha incorreta!');
+            const username = 'admin';
+            const password = document.getElementById('adminPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    isAdmin = true;
+                    closeAdminModal();
+                    updateAdminUI();
+                    alert('✅ Login realizado com sucesso!');
+                } else {
+                    alert('❌ ' + data.error);
+                }
+            } catch (error) {
+                console.error('Erro no login:', error);
+                alert('❌ Erro ao fazer login. Verifique se o servidor está rodando.');
             }
         }
 
         function logout() {
+            localStorage.removeItem('authToken');
+            authToken = null;
             isAdmin = false;
             updateAdminUI();
             alert('Você saiu do modo admin.');
@@ -624,63 +974,119 @@
 
         function updateAdminUI() {
             const forms = document.querySelectorAll('.admin-form');
-            const adminBtn = document.querySelector('.admin-btn');
+            const adminBtn = document.getElementById('adminBtn');
             
             forms.forEach(form => {
                 form.classList.toggle('active', isAdmin);
             });
             
-            adminBtn.textContent = isAdmin ? 'Sair Admin' : 'Admin';
-            adminBtn.style.background = isAdmin ? '#ef4444' : '';
+            adminBtn.textContent = isAdmin ? 'Sair' : 'Admin';
             
             renderAll();
         }
 
-        function getData(key) {
-            const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : [];
-        }
+        // ===============================================
+        // FUNÇÕES DE API
+        // ===============================================
 
-        function saveData(key, data) {
-            localStorage.setItem(key, JSON.stringify(data));
-        }
-
-        function adicionarAtualizacao(event) {
-            event.preventDefault();
-            const atualizacoes = getData('atualizacoes');
-            
-            const nova = {
-                id: Date.now(),
-                titulo: document.getElementById('atualTitulo').value,
-                conteudo: document.getElementById('atualConteudo').value,
-                data: new Date().toLocaleDateString('pt-BR')
-            };
-            
-            atualizacoes.unshift(nova);
-            saveData('atualizacoes', atualizacoes);
-            
-            document.getElementById('atualTitulo').value = '';
-            document.getElementById('atualConteudo').value = '';
-            
-            renderAtualizacoes();
-            alert('✅ Atualização publicada!');
-        }
-
-        function removerAtualizacao(id) {
-            if (confirm('Deseja realmente remover esta atualização?')) {
-                let atualizacoes = getData('atualizacoes');
-                atualizacoes = atualizacoes.filter(a => a.id !== id);
-                saveData('atualizacoes', atualizacoes);
-                renderAtualizacoes();
+        async function fetchData(endpoint) {
+            try {
+                const response = await fetch(`${API_URL}/api/${endpoint}`);
+                if (!response.ok) throw new Error('Erro ao buscar dados');
+                return await response.json();
+            } catch (error) {
+                console.error(`Erro ao buscar ${endpoint}:`, error);
+                return [];
             }
         }
 
-        function renderAtualizacoes() {
-            const atualizacoes = getData('atualizacoes');
+        async function createData(endpoint, data) {
+            try {
+                const response = await fetch(`${API_URL}/api/${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Erro ao criar');
+                }
+
+                return result;
+            } catch (error) {
+                console.error(`Erro ao criar ${endpoint}:`, error);
+                alert('❌ ' + error.message);
+                throw error;
+            }
+        }
+
+        async function deleteData(endpoint, id) {
+            try {
+                const response = await fetch(`${API_URL}/api/${endpoint}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    const result = await response.json();
+                    throw new Error(result.error || 'Erro ao deletar');
+                }
+
+                return true;
+            } catch (error) {
+                console.error(`Erro ao deletar ${endpoint}:`, error);
+                alert('❌ ' + error.message);
+                throw error;
+            }
+        }
+
+        // ===============================================
+        // ATUALIZAÇÕES
+        // ===============================================
+
+        async function adicionarAtualizacao(event) {
+            event.preventDefault();
+            
+            const titulo = document.getElementById('atualTitulo').value;
+            const conteudo = document.getElementById('atualConteudo').value;
+
+            try {
+                await createData('atualizacoes', { titulo, conteudo });
+                
+                document.getElementById('atualTitulo').value = '';
+                document.getElementById('atualConteudo').value = '';
+                
+                await renderAtualizacoes();
+                alert('✅ Atualização publicada com sucesso!');
+            } catch (error) {
+                // Erro já tratado
+            }
+        }
+
+        async function removerAtualizacao(id) {
+            if (confirm('Deseja realmente remover esta atualização?')) {
+                try {
+                    await deleteData('atualizacoes', id);
+                    await renderAtualizacoes();
+                } catch (error) {
+                    // Erro já tratado
+                }
+            }
+        }
+
+        async function renderAtualizacoes() {
+            const atualizacoes = await fetchData('atualizacoes');
             const grid = document.getElementById('atualizacoesGrid');
             
             if (atualizacoes.length === 0) {
-                grid.innerHTML = '<div class="empty-message">Nenhuma atualização publicada ainda.</div>';
+                grid.innerHTML = '<div class="empty-message">◢ Nenhuma atualização publicada ainda ◣</div>';
                 return;
             }
             
@@ -694,46 +1100,50 @@
             `).join('');
         }
 
-        function adicionarDownload(event) {
-            event.preventDefault();
-            const downloads = getData('downloads');
-            
-            const novo = {
-                id: Date.now(),
-                nome: document.getElementById('downloadNome').value,
-                versao: document.getElementById('downloadVersao').value,
-                link: document.getElementById('downloadLink').value,
-                descricao: document.getElementById('downloadDesc').value,
-                data: new Date().toLocaleDateString('pt-BR')
-            };
-            
-            downloads.unshift(novo);
-            saveData('downloads', downloads);
-            
-            document.getElementById('downloadNome').value = '';
-            document.getElementById('downloadVersao').value = '';
-            document.getElementById('downloadLink').value = '';
-            document.getElementById('downloadDesc').value = '';
-            
-            renderDownloads();
-            alert('✅ Download adicionado!');
-        }
+        // ===============================================
+        // DOWNLOADS
+        // ===============================================
 
-        function removerDownload(id) {
-            if (confirm('Deseja realmente remover este download?')) {
-                let downloads = getData('downloads');
-                downloads = downloads.filter(d => d.id !== id);
-                saveData('downloads', downloads);
-                renderDownloads();
+        async function adicionarDownload(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('downloadNome').value;
+            const versao = document.getElementById('downloadVersao').value;
+            const link = document.getElementById('downloadLink').value;
+            const descricao = document.getElementById('downloadDesc').value;
+
+            try {
+                await createData('downloads', { nome, versao, link, descricao });
+                
+                document.getElementById('downloadNome').value = '';
+                document.getElementById('downloadVersao').value = '';
+                document.getElementById('downloadLink').value = '';
+                document.getElementById('downloadDesc').value = '';
+                
+                await renderDownloads();
+                alert('✅ Download adicionado com sucesso!');
+            } catch (error) {
+                // Erro já tratado
             }
         }
 
-        function renderDownloads() {
-            const downloads = getData('downloads');
+        async function removerDownload(id) {
+            if (confirm('Deseja realmente remover este download?')) {
+                try {
+                    await deleteData('downloads', id);
+                    await renderDownloads();
+                } catch (error) {
+                    // Erro já tratado
+                }
+            }
+        }
+
+        async function renderDownloads() {
+            const downloads = await fetchData('downloads');
             const grid = document.getElementById('downloadsGrid');
             
             if (downloads.length === 0) {
-                grid.innerHTML = '<div class="empty-message">Nenhum download disponível ainda.</div>';
+                grid.innerHTML = '<div class="empty-message">◢ Nenhum download disponível ainda ◣</div>';
                 return;
             }
             
@@ -750,42 +1160,46 @@
             `).join('');
         }
 
-        function adicionarPost(event) {
-            event.preventDefault();
-            const posts = getData('posts');
-            
-            const novo = {
-                id: Date.now(),
-                titulo: document.getElementById('postTitulo').value,
-                conteudo: document.getElementById('postConteudo').value,
-                data: new Date().toLocaleDateString('pt-BR')
-            };
-            
-            posts.unshift(novo);
-            saveData('posts', posts);
-            
-            document.getElementById('postTitulo').value = '';
-            document.getElementById('postConteudo').value = '';
-            
-            renderPosts();
-            alert('✅ Post publicado!');
-        }
+        // ===============================================
+        // POSTS
+        // ===============================================
 
-        function removerPost(id) {
-            if (confirm('Deseja realmente remover este post?')) {
-                let posts = getData('posts');
-                posts = posts.filter(p => p.id !== id);
-                saveData('posts', posts);
-                renderPosts();
+        async function adicionarPost(event) {
+            event.preventDefault();
+            
+            const titulo = document.getElementById('postTitulo').value;
+            const conteudo = document.getElementById('postConteudo').value;
+
+            try {
+                await createData('posts', { titulo, conteudo });
+                
+                document.getElementById('postTitulo').value = '';
+                document.getElementById('postConteudo').value = '';
+                
+                await renderPosts();
+                alert('✅ Post publicado com sucesso!');
+            } catch (error) {
+                // Erro já tratado
             }
         }
 
-        function renderPosts() {
-            const posts = getData('posts');
+        async function removerPost(id) {
+            if (confirm('Deseja realmente remover este post?')) {
+                try {
+                    await deleteData('posts', id);
+                    await renderPosts();
+                } catch (error) {
+                    // Erro já tratado
+                }
+            }
+        }
+
+        async function renderPosts() {
+            const posts = await fetchData('posts');
             const grid = document.getElementById('postsGrid');
             
             if (posts.length === 0) {
-                grid.innerHTML = '<div class="empty-message">Nenhum post publicado ainda.</div>';
+                grid.innerHTML = '<div class="empty-message">◢ Nenhum post publicado ainda ◣</div>';
                 return;
             }
             
@@ -799,18 +1213,27 @@
             `).join('');
         }
 
-        function renderAll() {
-            renderAtualizacoes();
-            renderDownloads();
-            renderPosts();
+        // ===============================================
+        // RENDERIZAR TUDO
+        // ===============================================
+
+        async function renderAll() {
+            await renderPosts();
+            await renderAtualizacoes();
+            await renderDownloads();
         }
 
+        // ===============================================
+        // INICIALIZAÇÃO
+        // ===============================================
+        
         detectSystemTheme();
+        verifyToken();
         renderAll();
 
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
             if (!localStorage.getItem('theme')) {
-                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', e.matches ? 'light' : 'dark');
             }
         });
     </script>
