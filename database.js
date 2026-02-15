@@ -45,6 +45,8 @@ async function initDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             titulo TEXT NOT NULL,
             conteudo TEXT NOT NULL,
+            arquivo TEXT,
+            tipo_arquivo TEXT,
             data DATE NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -55,6 +57,8 @@ async function initDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             titulo TEXT NOT NULL,
             conteudo TEXT NOT NULL,
+            arquivo TEXT,
+            tipo_arquivo TEXT,
             data DATE NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -65,8 +69,23 @@ async function initDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             versao TEXT NOT NULL,
-            link TEXT NOT NULL,
+            arquivo TEXT,
+            link_externo TEXT,
+            tipo_arquivo TEXT,
             descricao TEXT NOT NULL,
+            data DATE NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+    
+    db.run(`
+        CREATE TABLE IF NOT EXISTS comentarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tipo TEXT NOT NULL,
+            item_id INTEGER NOT NULL,
+            autor TEXT NOT NULL,
+            conteudo TEXT NOT NULL,
+            aprovado INTEGER DEFAULT 1,
             data DATE NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -139,8 +158,9 @@ const postQueries = {
         return post;
     },
     
-    create: (titulo, conteudo, data) => {
-        db.run('INSERT INTO posts (titulo, conteudo, data) VALUES (?, ?, ?)', [titulo, conteudo, data]);
+    create: (titulo, conteudo, data, arquivo, tipoArquivo) => {
+        db.run('INSERT INTO posts (titulo, conteudo, data, arquivo, tipo_arquivo) VALUES (?, ?, ?, ?, ?)', 
+               [titulo, conteudo, data, arquivo, tipoArquivo]);
         saveDatabase();
         const result = db.exec('SELECT last_insert_rowid()');
         return { lastInsertRowid: result[0].values[0][0] };
@@ -178,8 +198,9 @@ const atualizacaoQueries = {
         return atualiza;
     },
     
-    create: (titulo, conteudo, data) => {
-        db.run('INSERT INTO atualizacoes (titulo, conteudo, data) VALUES (?, ?, ?)', [titulo, conteudo, data]);
+    create: (titulo, conteudo, data, arquivo, tipoArquivo) => {
+        db.run('INSERT INTO atualizacoes (titulo, conteudo, data, arquivo, tipo_arquivo) VALUES (?, ?, ?, ?, ?)', 
+               [titulo, conteudo, data, arquivo, tipoArquivo]);
         saveDatabase();
         const result = db.exec('SELECT last_insert_rowid()');
         return { lastInsertRowid: result[0].values[0][0] };
@@ -217,9 +238,9 @@ const downloadQueries = {
         return download;
     },
     
-    create: (nome, versao, link, descricao, data) => {
-        db.run('INSERT INTO downloads (nome, versao, link, descricao, data) VALUES (?, ?, ?, ?, ?)', 
-               [nome, versao, link, descricao, data]);
+    create: (nome, versao, arquivo, linkExterno, tipoArquivo, descricao, data) => {
+        db.run('INSERT INTO downloads (nome, versao, arquivo, link_externo, tipo_arquivo, descricao, data) VALUES (?, ?, ?, ?, ?, ?, ?)', 
+               [nome, versao, arquivo, linkExterno, tipoArquivo, descricao, data]);
         saveDatabase();
         const result = db.exec('SELECT last_insert_rowid()');
         return { lastInsertRowid: result[0].values[0][0] };
@@ -232,6 +253,101 @@ const downloadQueries = {
     }
 };
 
+// Queries de comentários
+const comentarioQueries = {
+    getAll: () => {
+        const result = db.exec('SELECT * FROM comentarios ORDER BY created_at DESC');
+        if (result.length === 0) return [];
+        
+        const columns = result[0].columns;
+        return result[0].values.map(values => {
+            const comentario = {};
+            columns.forEach((col, i) => comentario[col] = values[i]);
+            return comentario;
+        });
+    },
+    
+    getByItem: (tipo, itemId) => {
+        const result = db.exec('SELECT * FROM comentarios WHERE tipo = ? AND item_id = ? AND aprovado = 1 ORDER BY created_at ASC', [tipo, itemId]);
+        if (result.length === 0) return [];
+        
+        const columns = result[0].columns;
+        return result[0].values.map(values => {
+            const comentario = {};
+            columns.forEach((col, i) => comentario[col] = values[i]);
+            return comentario;
+        });
+    },
+    
+    create: (tipo, itemId, autor, conteudo, data) => {
+    const normalizar = (texto) =>
+        texto
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+
+    // Palavrões básicos PT-BR (exemplos comuns para moderação)
+    const palavrasProibidas = [
+  'palavrao1',
+  'palavrao2',
+  'spam',
+  'porra',
+  'merda',
+  'caralho',
+  'puta',
+  'viado',
+  'bosta',
+  'foda',
+  'cu',
+  'cacete',
+  'arrombado',
+  'desgraça'
+];
+
+    const conteudoNormalizado = normalizar(conteudo);
+
+    const contemPalavrao = palavrasProibidas.some(palavra => {
+        const regex = new RegExp(
+            palavra
+                .split('')
+                .join('[\\s\\W_]*'), // pega "p o r r a", "p@o#r$r$a"
+            'i'
+        );
+        return regex.test(conteudoNormalizado);
+    });
+
+    const aprovado = contemPalavrao ? 0 : 1;
+
+    db.run(
+        'INSERT INTO comentarios (tipo, item_id, autor, conteudo, aprovado, data) VALUES (?, ?, ?, ?, ?, ?)',
+        [tipo, itemId, autor, conteudo, aprovado, data]
+    );
+
+    saveDatabase();
+
+    const result = db.exec('SELECT last_insert_rowid()');
+    return { lastInsertRowid: result[0].values[0][0], aprovado };
+},
+    
+    delete: (id) => {
+        db.run('DELETE FROM comentarios WHERE id = ?', [id]);
+        saveDatabase();
+        return { changes: 1 };
+    },
+    
+    aprovar: (id) => {
+        db.run('UPDATE comentarios SET aprovado = 1 WHERE id = ?', [id]);
+        saveDatabase();
+        return { changes: 1 };
+    },
+    
+    rejeitar: (id) => {
+        db.run('UPDATE comentarios SET aprovado = 0 WHERE id = ?', [id]);
+        saveDatabase();
+        return { changes: 1 };
+    }
+};
+
 // Exportar tudo
 module.exports = {
     initDatabase,
@@ -239,4 +355,5 @@ module.exports = {
     postQueries,
     atualizacaoQueries,
     downloadQueries,
+    comentarioQueries,
 };

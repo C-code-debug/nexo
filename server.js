@@ -8,6 +8,8 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 require('dotenv').config();
 
 const { 
@@ -15,12 +17,65 @@ const {
     userQueries, 
     postQueries, 
     atualizacaoQueries, 
-    downloadQueries 
+    downloadQueries,
+    comentarioQueries
 } = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'nexo-secret-key';
+
+// ============= CONFIGURAÇÃO DE UPLOAD =============
+
+// Criar pasta uploads se não existir
+const uploadsDir = path.join(__dirname, 'public', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Configurar storage do multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadsDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, uniqueSuffix + ext);
+    }
+});
+
+// Filtro de tipos de arquivo
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = [
+        'image/jpeg',
+        'image/jpg', 
+        'image/png',
+        'image/gif',
+        'image/webp',
+        'audio/mpeg',
+        'audio/mp3',
+        'audio/wav',
+        'audio/ogg',
+        'application/zip',
+        'application/x-zip-compressed',
+        'application/x-rar-compressed'
+    ];
+    
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Tipo de arquivo não permitido. Use: imagens (jpg, png, gif, webp), áudios (mp3, wav, ogg) ou arquivos compactados (zip, rar)'), false);
+    }
+};
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 50 * 1024 * 1024 // 50MB max
+    }
+});
 
 // ============= CONFIGURAÇÕES =============
 app.use(cors()); // Permitir requisições de qualquer origem
@@ -117,7 +172,7 @@ app.get('/api/posts', (req, res) => {
 });
 
 // POST /api/posts - Criar novo post (PRECISA ESTAR LOGADO)
-app.post('/api/posts', authenticateToken, (req, res) => {
+app.post('/api/posts', authenticateToken, upload.single('arquivo'), (req, res) => {
     try {
         const { titulo, conteudo } = req.body;
 
@@ -126,11 +181,15 @@ app.post('/api/posts', authenticateToken, (req, res) => {
         }
 
         const data = new Date().toLocaleDateString('pt-BR');
-        const result = postQueries.create(titulo, conteudo, data);
+        const arquivo = req.file ? `/uploads/${req.file.filename}` : null;
+        const tipoArquivo = req.file ? req.file.mimetype : null;
+        
+        const result = postQueries.create(titulo, conteudo, data, arquivo, tipoArquivo);
 
         res.status(201).json({
             message: 'Post criado com sucesso',
-            id: result.lastInsertRowid
+            id: result.lastInsertRowid,
+            arquivo: arquivo
         });
 
     } catch (error) {
@@ -170,7 +229,7 @@ app.get('/api/atualizacoes', (req, res) => {
 });
 
 // POST /api/atualizacoes - Criar atualização (PRECISA ESTAR LOGADO)
-app.post('/api/atualizacoes', authenticateToken, (req, res) => {
+app.post('/api/atualizacoes', authenticateToken, upload.single('arquivo'), (req, res) => {
     try {
         const { titulo, conteudo } = req.body;
 
@@ -179,11 +238,15 @@ app.post('/api/atualizacoes', authenticateToken, (req, res) => {
         }
 
         const data = new Date().toLocaleDateString('pt-BR');
-        const result = atualizacaoQueries.create(titulo, conteudo, data);
+        const arquivo = req.file ? `/uploads/${req.file.filename}` : null;
+        const tipoArquivo = req.file ? req.file.mimetype : null;
+        
+        const result = atualizacaoQueries.create(titulo, conteudo, data, arquivo, tipoArquivo);
 
         res.status(201).json({
             message: 'Atualização criada com sucesso',
-            id: result.lastInsertRowid
+            id: result.lastInsertRowid,
+            arquivo: arquivo
         });
 
     } catch (error) {
@@ -223,20 +286,30 @@ app.get('/api/downloads', (req, res) => {
 });
 
 // POST /api/downloads - Criar download (PRECISA ESTAR LOGADO)
-app.post('/api/downloads', authenticateToken, (req, res) => {
+app.post('/api/downloads', authenticateToken, upload.single('arquivo'), (req, res) => {
     try {
-        const { nome, versao, link, descricao } = req.body;
+        const { nome, versao, descricao, linkExterno } = req.body;
 
-        if (!nome || !versao || !link || !descricao) {
-            return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+        if (!nome || !versao || !descricao) {
+            return res.status(400).json({ error: 'Nome, versão e descrição são obrigatórios' });
+        }
+
+        // Validar que tem arquivo OU link externo
+        if (!req.file && !linkExterno) {
+            return res.status(400).json({ error: 'Você precisa enviar um arquivo OU fornecer um link externo' });
         }
 
         const data = new Date().toLocaleDateString('pt-BR');
-        const result = downloadQueries.create(nome, versao, link, descricao, data);
+        const arquivo = req.file ? `/uploads/${req.file.filename}` : null;
+        const tipoArquivo = req.file ? req.file.mimetype : null;
+        
+        const result = downloadQueries.create(nome, versao, arquivo, linkExterno || null, tipoArquivo, descricao, data);
 
         res.status(201).json({
             message: 'Download criado com sucesso',
-            id: result.lastInsertRowid
+            id: result.lastInsertRowid,
+            arquivo: arquivo,
+            linkExterno: linkExterno
         });
 
     } catch (error) {
@@ -262,6 +335,77 @@ app.delete('/api/downloads/:id', authenticateToken, (req, res) => {
     }
 });
 
+// ============= ROTAS DE COMENTÁRIOS =============
+
+// GET /api/comentarios/:tipo/:itemId - Listar comentários de um item
+app.get('/api/comentarios/:tipo/:itemId', (req, res) => {
+    try {
+        const { tipo, itemId } = req.params;
+        const comentarios = comentarioQueries.getByItem(tipo, itemId);
+        res.json(comentarios);
+    } catch (error) {
+        console.error('Erro ao buscar comentários:', error);
+        res.status(500).json({ error: 'Erro ao buscar comentários' });
+    }
+});
+
+// POST /api/comentarios - Criar comentário (NÃO precisa estar logado)
+app.post('/api/comentarios', (req, res) => {
+    try {
+        const { tipo, itemId, autor, conteudo } = req.body;
+
+        if (!tipo || !itemId || !autor || !conteudo) {
+            return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+        }
+
+        if (autor.length < 2 || autor.length > 50) {
+            return res.status(400).json({ error: 'Nome deve ter entre 2 e 50 caracteres' });
+        }
+
+        if (conteudo.length < 3 || conteudo.length > 500) {
+            return res.status(400).json({ error: 'Comentário deve ter entre 3 e 500 caracteres' });
+        }
+
+        const data = new Date().toLocaleDateString('pt-BR');
+        const result = comentarioQueries.create(tipo, itemId, autor, conteudo, data);
+
+        if (result.aprovado === 0) {
+            return res.status(201).json({
+                message: 'Comentário enviado para moderação',
+                id: result.lastInsertRowid,
+                pendente: true
+            });
+        }
+
+        res.status(201).json({
+            message: 'Comentário publicado com sucesso',
+            id: result.lastInsertRowid,
+            pendente: false
+        });
+
+    } catch (error) {
+        console.error('Erro ao criar comentário:', error);
+        res.status(500).json({ error: 'Erro ao criar comentário' });
+    }
+});
+
+// DELETE /api/comentarios/:id - Deletar comentário (PRECISA ESTAR LOGADO)
+app.delete('/api/comentarios/:id', authenticateToken, (req, res) => {
+    try {
+        const result = comentarioQueries.delete(req.params.id);
+
+        if (result.changes === 0) {
+            return res.status(404).json({ error: 'Comentário não encontrado' });
+        }
+
+        res.json({ message: 'Comentário deletado com sucesso' });
+
+    } catch (error) {
+        console.error('Erro ao deletar comentário:', error);
+        res.status(500).json({ error: 'Erro ao deletar comentário' });
+    }
+});
+
 // ============= ROTA PRINCIPAL =============
 
 // GET / - Servir o site
@@ -277,7 +421,7 @@ app.listen(PORT, () => {
 ║     🚀 SERVIDOR NEXO INICIADO! 🚀     ║
 ╠════════════════════════════════════════╣
 ║  📍 URL: http://localhost:${PORT}        ║
-║  🔐 Login: admin / nexo2024            ║
+║  🔐 Login: admin / NexADM404            ║
 ╚════════════════════════════════════════╝
     `);
 });

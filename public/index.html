@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXO - Game Development</title>
+
     <style>
         * {
             margin: 0;
@@ -715,6 +716,231 @@
                 opacity: 0.1;
             }
         }
+
+        /* Sistema de Comentários */
+        .comentarios-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .comentarios-title {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .comentario-form {
+            background: var(--bg-secondary);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .comentario-form input,
+        .comentario-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: all 0.15s ease;
+        }
+
+        .comentario-form input:focus,
+        .comentario-form textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .comentario-form textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .comentario-item {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .comentario-item:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .comentario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .comentario-autor {
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .comentario-data {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .comentario-conteudo {
+            color: var(--text-primary);
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .comentario-delete {
+            background: linear-gradient(135deg, #ff0055, #ff4400);
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.15s ease;
+        }
+
+        .comentario-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4);
+        }
+
+        .sem-comentarios {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 2rem;
+            font-style: italic;
+        }
+        
+        /* Upload de arquivos */
+        .file-upload-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--accent);
+            background: var(--bg-card);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .file-upload-input {
+            display: none;
+        }
+
+        .file-preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .file-preview.active {
+            display: block;
+        }
+
+        .file-preview img {
+            max-width: 100%;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        .card-arquivo {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .card-arquivo img {
+            max-width: 100%;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-arquivo audio {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Toggle entre upload e link */
+        .download-mode-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-secondary);
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 0.8rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #000;
+            border-color: transparent;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .mode-btn:hover:not(.active) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .download-mode-content {
+            display: none;
+        }
+
+        .download-mode-content.active {
+            display: block;
+        }
+
     </style>
 </head>
 <body>
@@ -754,17 +980,25 @@
             
             <div class="admin-form" id="formAtualizacoes">
                 <h3>Adicionar Nova Atualização</h3>
-                <form onsubmit="adicionarAtualizacao(event)">
-                    <div class="form-group">
-                        <label>Título</label>
-                        <input type="text" id="atualTitulo" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Conteúdo</label>
-                        <textarea id="atualConteudo" required></textarea>
-                    </div>
-                    <button type="submit" class="card-btn">Publicar Atualização</button>
-                </form>
+                <form onsubmit="adicionarAtualizacao(event)" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Título</label>
+        <input type="text" id="atualTitulo" required>
+    </div>
+    <div class="form-group">
+        <label>Conteúdo</label>
+        <textarea id="atualConteudo" required></textarea>
+    </div>
+    <div class="file-upload-container">
+        <label class="file-upload-label" for="atualArquivo">
+            📎 Adicionar arquivo (opcional)<br>
+            <small>Imagens, áudios ou ZIP até 50MB</small>
+        </label>
+        <input type="file" id="atualArquivo" class="file-upload-input" accept="image/*,audio/*,.zip,.rar">
+        <div class="file-preview" id="atualPreview"></div>
+    </div>
+    <button type="submit" class="card-btn">Publicar Atualização</button>
+</form>
             </div>
 
             <div id="atualizacoesGrid" class="cards-grid">
@@ -777,25 +1011,55 @@
             
             <div class="admin-form" id="formDownloads">
                 <h3>Adicionar Novo Download</h3>
-                <form onsubmit="adicionarDownload(event)">
-                    <div class="form-group">
-                        <label>Nome do Jogo</label>
-                        <input type="text" id="downloadNome" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Versão</label>
-                        <input type="text" id="downloadVersao" placeholder="v1.0" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Link de Download</label>
-                        <input type="url" id="downloadLink" placeholder="https://..." required>
-                    </div>
-                    <div class="form-group">
-                        <label>Descrição</label>
-                        <textarea id="downloadDesc" required></textarea>
-                    </div>
-                    <button type="submit" class="card-btn">Adicionar Download</button>
-                </form>
+                <form onsubmit="adicionarDownload(event)" enctype="multipart/form-data" id="formDownloadSubmit">
+    <div class="form-group">
+        <label>Nome do Jogo</label>
+        <input type="text" id="downloadNome" required>
+    </div>
+    <div class="form-group">
+        <label>Versão</label>
+        <input type="text" id="downloadVersao" placeholder="v1.0" required>
+    </div>
+    
+    <!-- Toggle entre Upload e Link -->
+    <div class="download-mode-toggle">
+        <button type="button" class="mode-btn active" onclick="toggleDownloadMode('upload')">
+            📤 Upload Direto
+        </button>
+        <button type="button" class="mode-btn" onclick="toggleDownloadMode('link')">
+            🔗 Link Externo
+        </button>
+    </div>
+    
+    <!-- Modo Upload -->
+    <div class="download-mode-content active" id="downloadModeUpload">
+        <div class="file-upload-container">
+            <label class="file-upload-label" for="downloadArquivo">
+                📎 Arquivo do Jogo<br>
+                <small>ZIP, RAR até 50MB</small>
+            </label>
+            <input type="file" id="downloadArquivo" class="file-upload-input" accept=".zip,.rar">
+            <div class="file-preview" id="downloadPreview"></div>
+        </div>
+    </div>
+    
+    <!-- Modo Link -->
+    <div class="download-mode-content" id="downloadModeLink">
+        <div class="form-group">
+            <label>Link de Download Externo</label>
+            <input type="url" id="downloadLinkExterno" placeholder="https://drive.google.com/...">
+            <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                Use Google Drive, Mega, MediaFire, etc. para jogos grandes
+            </small>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label>Descrição</label>
+        <textarea id="downloadDesc" required></textarea>
+    </div>
+    <button type="submit" class="card-btn">Adicionar Download</button>
+</form>
             </div>
 
             <div id="downloadsGrid" class="cards-grid">
@@ -808,17 +1072,25 @@
             
             <div class="admin-form" id="formPosts">
                 <h3>Criar Novo Post</h3>
-                <form onsubmit="adicionarPost(event)">
-                    <div class="form-group">
-                        <label>Título</label>
-                        <input type="text" id="postTitulo" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Conteúdo</label>
-                        <textarea id="postConteudo" required></textarea>
-                    </div>
-                    <button type="submit" class="card-btn">Publicar Post</button>
-                </form>
+                <form onsubmit="adicionarPost(event)" enctype="multipart/form-data">
+    <div class="form-group">
+        <label>Título</label>
+        <input type="text" id="postTitulo" required>
+    </div>
+    <div class="form-group">
+        <label>Conteúdo</label>
+        <textarea id="postConteudo" required></textarea>
+    </div>
+    <div class="file-upload-container">
+        <label class="file-upload-label" for="postArquivo">
+            📎 Adicionar arquivo (opcional)<br>
+            <small>Imagens, áudios ou ZIP até 50MB</small>
+        </label>
+        <input type="file" id="postArquivo" class="file-upload-input" accept="image/*,audio/*,.zip,.rar">
+        <div class="file-preview" id="postPreview"></div>
+    </div>
+    <button type="submit" class="card-btn">Publicar Post</button>
+</form>
             </div>
 
             <div id="postsGrid" class="cards-grid">
@@ -1052,23 +1324,47 @@
         // ===============================================
 
         async function adicionarAtualizacao(event) {
-            event.preventDefault();
-            
-            const titulo = document.getElementById('atualTitulo').value;
-            const conteudo = document.getElementById('atualConteudo').value;
+    event.preventDefault();
+    
+    const titulo = document.getElementById('atualTitulo').value;
+    const conteudo = document.getElementById('atualConteudo').value;
+    const arquivoInput = document.getElementById('atualArquivo');
 
-            try {
-                await createData('atualizacoes', { titulo, conteudo });
-                
-                document.getElementById('atualTitulo').value = '';
-                document.getElementById('atualConteudo').value = '';
-                
-                await renderAtualizacoes();
-                alert('✅ Atualização publicada com sucesso!');
-            } catch (error) {
-                // Erro já tratado
-            }
+    const formData = new FormData();
+    formData.append('titulo', titulo);
+    formData.append('conteudo', conteudo);
+    if (arquivoInput.files[0]) {
+        formData.append('arquivo', arquivoInput.files[0]);
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/atualizacoes`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Erro ao criar atualização');
         }
+
+        document.getElementById('atualTitulo').value = '';
+        document.getElementById('atualConteudo').value = '';
+        arquivoInput.value = '';
+        document.getElementById('atualPreview').classList.remove('active');
+        document.getElementById('atualPreview').innerHTML = '';
+        
+        await renderAtualizacoes();
+        alert('✅ Atualização publicada com sucesso!');
+    } catch (error) {
+        console.error('Erro ao criar atualização:', error);
+        alert('❌ ' + error.message);
+    }
+}
 
         async function removerAtualizacao(id) {
             if (confirm('Deseja realmente remover esta atualização?')) {
@@ -1082,50 +1378,145 @@
         }
 
         async function renderAtualizacoes() {
-            const atualizacoes = await fetchData('atualizacoes');
-            const grid = document.getElementById('atualizacoesGrid');
+    const atualizacoes = await fetchData('atualizacoes');
+    const grid = document.getElementById('atualizacoesGrid');
+    
+    if (atualizacoes.length === 0) {
+        grid.innerHTML = '<div class="empty-message">◢ Nenhuma atualização publicada ainda ◣</div>';
+        return;
+    }
+    
+    grid.innerHTML = atualizacoes.map(a => `
+        <div class="card">
+            <h3 class="card-title">${a.titulo}</h3>
+            <p class="card-date">${a.data}</p>
+            <p class="card-content">${a.conteudo}</p>
             
-            if (atualizacoes.length === 0) {
-                grid.innerHTML = '<div class="empty-message">◢ Nenhuma atualização publicada ainda ◣</div>';
-                return;
-            }
-            
-            grid.innerHTML = atualizacoes.map(a => `
-                <div class="card">
-                    <h3 class="card-title">${a.titulo}</h3>
-                    <p class="card-date">${a.data}</p>
-                    <p class="card-content">${a.conteudo}</p>
-                    ${isAdmin ? `<button class="card-btn delete-btn" onclick="removerAtualizacao(${a.id})">Remover</button>` : ''}
+            <!-- ⬇️ ADICIONE AQUI ⬇️ -->
+            ${a.arquivo ? `
+                <div class="card-arquivo">
+                    ${a.tipo_arquivo.startsWith('image/') ? 
+                        `<img src="${a.arquivo}" alt="${a.titulo}">` : 
+                    a.tipo_arquivo.startsWith('audio/') ?
+                        `<audio controls><source src="${a.arquivo}" type="${a.tipo_arquivo}"></audio>` :
+                        `<a href="${a.arquivo}" download><button class="card-btn">📎 Baixar Arquivo Anexo</button></a>`
+                    }
                 </div>
-            `).join('');
-        }
+            ` : ''}
+            <!-- ⬆️ ATÉ AQUI ⬆️ -->
+            
+            ${isAdmin ? `<button class="card-btn delete-btn" onclick="removerAtualizacao(${a.id})">Remover</button>` : ''}
+            
+            <div class="comentarios-section">
+                <h4 class="comentarios-title">💬 Comentários</h4>
+                
+                <div class="comentario-form">
+                    <input type="text" id="nome-atualizacao-${a.id}" placeholder="Seu nome" maxlength="50">
+                    <textarea id="comentario-atualizacao-${a.id}" placeholder="Deixe seu comentário..." maxlength="500"></textarea>
+                    <button class="card-btn" onclick="enviarComentario('atualizacao', ${a.id})">Enviar Comentário</button>
+                </div>
+                
+                <div id="comentarios-atualizacao-${a.id}"></div>
+            </div>
+        </div>
+    `).join('');
+
+    atualizacoes.forEach(a => {
+        carregarComentarios('atualizacao', a.id);
+    });
+}
 
         // ===============================================
         // DOWNLOADS
         // ===============================================
 
-        async function adicionarDownload(event) {
-            event.preventDefault();
+        // Toggle entre upload e link externo
+        function toggleDownloadMode(mode) {
+            // Atualizar botões
+            document.querySelectorAll('.download-mode-toggle .mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
             
-            const nome = document.getElementById('downloadNome').value;
-            const versao = document.getElementById('downloadVersao').value;
-            const link = document.getElementById('downloadLink').value;
-            const descricao = document.getElementById('downloadDesc').value;
-
-            try {
-                await createData('downloads', { nome, versao, link, descricao });
-                
-                document.getElementById('downloadNome').value = '';
-                document.getElementById('downloadVersao').value = '';
-                document.getElementById('downloadLink').value = '';
-                document.getElementById('downloadDesc').value = '';
-                
-                await renderDownloads();
-                alert('✅ Download adicionado com sucesso!');
-            } catch (error) {
-                // Erro já tratado
+            // Atualizar conteúdo
+            document.getElementById('downloadModeUpload').classList.remove('active');
+            document.getElementById('downloadModeLink').classList.remove('active');
+            
+            if (mode === 'upload') {
+                document.getElementById('downloadModeUpload').classList.add('active');
+                document.getElementById('downloadArquivo').required = true;
+                document.getElementById('downloadLinkExterno').required = false;
+                document.getElementById('downloadLinkExterno').value = '';
+            } else {
+                document.getElementById('downloadModeLink').classList.add('active');
+                document.getElementById('downloadArquivo').required = false;
+                document.getElementById('downloadLinkExterno').required = true;
+                document.getElementById('downloadArquivo').value = '';
+                document.getElementById('downloadPreview').classList.remove('active');
             }
         }
+
+        async function adicionarDownload(event) {
+    event.preventDefault();
+    
+    const nome = document.getElementById('downloadNome').value;
+    const versao = document.getElementById('downloadVersao').value;
+    const descricao = document.getElementById('downloadDesc').value;
+    const arquivoInput = document.getElementById('downloadArquivo');
+    const linkExterno = document.getElementById('downloadLinkExterno').value;
+
+    // Validar que tem arquivo OU link
+    if (!arquivoInput.files[0] && !linkExterno) {
+        alert('❌ Você precisa enviar um arquivo OU fornecer um link externo');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('nome', nome);
+    formData.append('versao', versao);
+    formData.append('descricao', descricao);
+    
+    if (arquivoInput.files[0]) {
+        formData.append('arquivo', arquivoInput.files[0]);
+    }
+    
+    if (linkExterno) {
+        formData.append('linkExterno', linkExterno);
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/downloads`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Erro ao criar download');
+        }
+
+        document.getElementById('downloadNome').value = '';
+        document.getElementById('downloadVersao').value = '';
+        document.getElementById('downloadDesc').value = '';
+        arquivoInput.value = '';
+        document.getElementById('downloadLinkExterno').value = '';
+        document.getElementById('downloadPreview').classList.remove('active');
+        document.getElementById('downloadPreview').innerHTML = '';
+        
+        // Resetar para modo upload
+        toggleDownloadMode('upload');
+        
+        await renderDownloads();
+        alert('✅ Download adicionado com sucesso!');
+    } catch (error) {
+        console.error('Erro ao criar download:', error);
+        alert('❌ ' + error.message);
+    }
+}
 
         async function removerDownload(id) {
             if (confirm('Deseja realmente remover este download?')) {
@@ -1139,49 +1530,80 @@
         }
 
         async function renderDownloads() {
-            const downloads = await fetchData('downloads');
-            const grid = document.getElementById('downloadsGrid');
+    const downloads = await fetchData('downloads');
+    const grid = document.getElementById('downloadsGrid');
+    
+    if (downloads.length === 0) {
+        grid.innerHTML = '<div class="empty-message">◢ Nenhum download disponível ainda ◣</div>';
+        return;
+    }
+    
+    grid.innerHTML = downloads.map(d => `
+        <div class="card">
+            <h3 class="card-title">${d.nome}</h3>
+            <p class="card-date">${d.versao} • ${d.data}</p>
+            <p class="card-content">${d.descricao}</p>
             
-            if (downloads.length === 0) {
-                grid.innerHTML = '<div class="empty-message">◢ Nenhum download disponível ainda ◣</div>';
-                return;
+            ${d.arquivo ? 
+                `<a href="${d.arquivo}" download>
+                    <button class="card-btn">⬇️ Baixar ${d.nome}</button>
+                </a>` : 
+                `<a href="${d.link_externo}" target="_blank" rel="noopener noreferrer">
+                    <button class="card-btn">🔗 Baixar ${d.nome}</button>
+                </a>`
             }
             
-            grid.innerHTML = downloads.map(d => `
-                <div class="card">
-                    <h3 class="card-title">${d.nome}</h3>
-                    <p class="card-date">${d.versao} • ${d.data}</p>
-                    <p class="card-content">${d.descricao}</p>
-                    <a href="${d.link}" target="_blank">
-                        <button class="card-btn">⬇️ Baixar Agora</button>
-                    </a>
-                    ${isAdmin ? `<button class="card-btn delete-btn" onclick="removerDownload(${d.id})">Remover</button>` : ''}
-                </div>
-            `).join('');
-        }
+            ${isAdmin ? `<button class="card-btn delete-btn" onclick="removerDownload(${d.id})">Remover</button>` : ''}
+        </div>
+    `).join('');
+}
 
         // ===============================================
         // POSTS
         // ===============================================
 
         async function adicionarPost(event) {
-            event.preventDefault();
-            
-            const titulo = document.getElementById('postTitulo').value;
-            const conteudo = document.getElementById('postConteudo').value;
+    event.preventDefault();
+    
+    const titulo = document.getElementById('postTitulo').value;
+    const conteudo = document.getElementById('postConteudo').value;
+    const arquivoInput = document.getElementById('postArquivo');
 
-            try {
-                await createData('posts', { titulo, conteudo });
-                
-                document.getElementById('postTitulo').value = '';
-                document.getElementById('postConteudo').value = '';
-                
-                await renderPosts();
-                alert('✅ Post publicado com sucesso!');
-            } catch (error) {
-                // Erro já tratado
-            }
+    const formData = new FormData();
+    formData.append('titulo', titulo);
+    formData.append('conteudo', conteudo);
+    if (arquivoInput.files[0]) {
+        formData.append('arquivo', arquivoInput.files[0]);
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api/posts`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Erro ao criar post');
         }
+
+        document.getElementById('postTitulo').value = '';
+        document.getElementById('postConteudo').value = '';
+        arquivoInput.value = '';
+        document.getElementById('postPreview').classList.remove('active');
+        document.getElementById('postPreview').innerHTML = '';
+        
+        await renderPosts();
+        alert('✅ Post publicado com sucesso!');
+    } catch (error) {
+        console.error('Erro ao criar post:', error);
+        alert('❌ ' + error.message);
+    }
+}
 
         async function removerPost(id) {
             if (confirm('Deseja realmente remover este post?')) {
@@ -1195,23 +1617,54 @@
         }
 
         async function renderPosts() {
-            const posts = await fetchData('posts');
-            const grid = document.getElementById('postsGrid');
+    const posts = await fetchData('posts');
+    const grid = document.getElementById('postsGrid');
+    
+    if (posts.length === 0) {
+        grid.innerHTML = '<div class="empty-message">◢ Nenhum post publicado ainda ◣</div>';
+        return;
+    }
+    
+    grid.innerHTML = posts.map(p => `
+        <div class="card">
+            <h3 class="card-title">${p.titulo}</h3>
+            <p class="card-date">${p.data}</p>
+            <p class="card-content">${p.conteudo}</p>
             
-            if (posts.length === 0) {
-                grid.innerHTML = '<div class="empty-message">◢ Nenhum post publicado ainda ◣</div>';
-                return;
-            }
-            
-            grid.innerHTML = posts.map(p => `
-                <div class="card">
-                    <h3 class="card-title">${p.titulo}</h3>
-                    <p class="card-date">${p.data}</p>
-                    <p class="card-content">${p.conteudo}</p>
-                    ${isAdmin ? `<button class="card-btn delete-btn" onclick="removerPost(${p.id})">Remover</button>` : ''}
+            <!-- ⬇️ ADICIONE AQUI O CÓDIGO DE ARQUIVO ⬇️ -->
+            ${p.arquivo ? `
+                <div class="card-arquivo">
+                    ${p.tipo_arquivo.startsWith('image/') ? 
+                        `<img src="${p.arquivo}" alt="${p.titulo}">` : 
+                    p.tipo_arquivo.startsWith('audio/') ?
+                        `<audio controls><source src="${p.arquivo}" type="${p.tipo_arquivo}"></audio>` :
+                        `<a href="${p.arquivo}" download><button class="card-btn">📎 Baixar Arquivo Anexo</button></a>`
+                    }
                 </div>
-            `).join('');
-        }
+            ` : ''}
+            <!-- ⬆️ ATÉ AQUI ⬆️ -->
+            
+            ${isAdmin ? `<button class="card-btn delete-btn" onclick="removerPost(${p.id})">Remover</button>` : ''}
+            
+            <!-- Seção de Comentários -->
+            <div class="comentarios-section">
+                <h4 class="comentarios-title">💬 Comentários</h4>
+                
+                <div class="comentario-form">
+                    <input type="text" id="nome-post-${p.id}" placeholder="Seu nome" maxlength="50">
+                    <textarea id="comentario-post-${p.id}" placeholder="Deixe seu comentário..." maxlength="500"></textarea>
+                    <button class="card-btn" onclick="enviarComentario('post', ${p.id})">Enviar Comentário</button>
+                </div>
+                
+                <div id="comentarios-post-${p.id}"></div>
+            </div>
+        </div>
+    `).join('');
+
+    posts.forEach(p => {
+        carregarComentarios('post', p.id);
+    });
+}
 
         // ===============================================
         // RENDERIZAR TUDO
@@ -1222,6 +1675,139 @@
             await renderAtualizacoes();
             await renderDownloads();
         }
+
+        // ===============================================
+        // COMENTÁRIOS
+        // ===============================================
+
+        async function enviarComentario(tipo, itemId) {
+            const nomeInput = document.getElementById(`nome-${tipo}-${itemId}`);
+            const comentarioInput = document.getElementById(`comentario-${tipo}-${itemId}`);
+            
+            const autor = nomeInput.value.trim();
+            const conteudo = comentarioInput.value.trim();
+
+            if (!autor) {
+                alert('❌ Por favor, digite seu nome');
+                return;
+            }
+
+            if (!conteudo) {
+                alert('❌ Por favor, escreva um comentário');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/comentarios`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ tipo, itemId, autor, conteudo })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Erro ao enviar comentário');
+                }
+
+                if (result.pendente) {
+                    alert('⏳ Comentário enviado para moderação');
+                } else {
+                    alert('✅ Comentário publicado!');
+                }
+
+                nomeInput.value = '';
+                comentarioInput.value = '';
+                
+                await carregarComentarios(tipo, itemId);
+
+            } catch (error) {
+                console.error('Erro ao enviar comentário:', error);
+                alert('❌ ' + error.message);
+            }
+        }
+
+        async function carregarComentarios(tipo, itemId) {
+            try {
+                const response = await fetch(`${API_URL}/api/comentarios/${tipo}/${itemId}`);
+                const comentarios = await response.json();
+                
+                const container = document.getElementById(`comentarios-${tipo}-${itemId}`);
+                
+                if (comentarios.length === 0) {
+                    container.innerHTML = '<div class="sem-comentarios">Nenhum comentário ainda. Seja o primeiro!</div>';
+                    return;
+                }
+
+                container.innerHTML = comentarios.map(c => `
+                    <div class="comentario-item">
+                        <div class="comentario-header">
+                            <span class="comentario-autor">${c.autor}</span>
+                            <span class="comentario-data">${c.data}</span>
+                        </div>
+                        <p class="comentario-conteudo">${c.conteudo}</p>
+                        ${isAdmin ? `<button class="comentario-delete" onclick="deletarComentario(${c.id}, '${tipo}', ${itemId})">Excluir</button>` : ''}
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Erro ao carregar comentários:', error);
+            }
+        }
+
+        async function deletarComentario(comentarioId, tipo, itemId) {
+            if (!confirm('Deseja realmente excluir este comentário?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/comentarios/${comentarioId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao deletar comentário');
+                }
+
+                alert('✅ Comentário excluído!');
+                await carregarComentarios(tipo, itemId);
+
+            } catch (error) {
+                console.error('Erro ao deletar comentário:', error);
+                alert('❌ ' + error.message);
+            }
+        }
+
+        // Preview de arquivos
+document.addEventListener('DOMContentLoaded', () => {
+    ['postArquivo', 'atualArquivo', 'downloadArquivo'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('change', function(e) {
+                const preview = document.getElementById(id.replace('Arquivo', 'Preview'));
+                const file = e.target.files[0];
+                
+                if (file) {
+                    preview.classList.add('active');
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            preview.innerHTML = `<strong>Preview:</strong><br><img src="${e.target.result}" alt="Preview">`;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        preview.innerHTML = `<strong>Arquivo selecionado:</strong><br>${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                    }
+                } else {
+                    preview.classList.remove('active');
+                }
+            });
+        }
+    });
+});
 
         // ===============================================
         // INICIALIZAÇÃO
